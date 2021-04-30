@@ -41,7 +41,6 @@ const SourceBox: FC<ISourceBox> = ({ uuid, children}) => {
     const { config } = list.find((item) => item.config.uuid === uuid)!;
     const { style } = config;
     const changeSnapshotSaveStatus = useCallback((status: boolean, dragging: boolean) => {
-        console.log(333)
         changeSnapshotSave((state) => ({
             ...state,
             snapshotSave: status,

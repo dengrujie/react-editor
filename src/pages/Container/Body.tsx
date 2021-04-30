@@ -37,8 +37,8 @@ const Body: FC = () => {
     const idList = useRecoilValue(componentIdList);
     const nearObj = useRecoilValue(nearComponent);
     const { list, snapshotData, snapshotIndex, snapshotSave, selectedComponent, isDragging } = componentState;
-    const getNearTarget = (target: Ilist, nearObj: INearComponent) => {
-        const newTarget = cloneDeep(target);
+    const getNearTarget = (newTarget: Ilist, nearObj: INearComponent) => {
+        // const newTarget = cloneDeep(target);
         if(nearObj.showVerticalLeft || nearObj.showVerticalMid || nearObj.showVerticalRight ) {
             newTarget!.config.style.left = nearObj.left;
         }
@@ -63,7 +63,6 @@ const Body: FC = () => {
             const target = list.find((i) => i.config.uuid === newItem.uuid);
             newItem.style.left = monitor.getClientOffset()!.x - WRAPPERLEFT;
             newItem.style.top = monitor.getClientOffset()!.y - WRAPPERTOP;
-            console.log(2)
             if (!target) {
                 setComponentState((state) => ({
                     ...state,
@@ -96,7 +95,6 @@ const Body: FC = () => {
                 list: [...newList],
                 isDragging: true
             }));
-            console.log(111)
             if (snapshotSave) {
                 setOffset(monitor.getSourceClientOffset()!);
                 saveSnapshot([...newList])
@@ -116,8 +114,7 @@ const Body: FC = () => {
         const newList = cloneDeep(list);
         let newTarget = newList.find((i) => i.config.uuid === selectedComponent);
         if(!getNearStatus(nearObj)) return;
-        newTarget = getNearTarget(newTarget!, nearObj);
-        console.log(1, newTarget, newList)
+        getNearTarget(newTarget!, nearObj);
         setComponentState((state) => ({
             ...state,
             list: [...newList]
