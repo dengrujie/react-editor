@@ -9,7 +9,7 @@ import ComponentBox from '../Assist/ComponentBox';
 import SourceBox from '../Assist/SourceBox';
 import MarkLine from '../Assist/MarkLine';
 
-type STYLE = {
+export type STYLE = {
     [key: string]: string | number | undefined;
 }
 
@@ -17,6 +17,7 @@ export interface IConfig {
     value: ComponentsList;
     uuid?: string;
     style: STYLE;
+    animations: string[];
 }
 
 export interface IPosition {
@@ -55,7 +56,7 @@ const Body: FC = () => {
         return isNear;
     }
     // 第一个参数是 collect 方法返回的对象，第二个参数是一个 ref 值，赋值给 drop 元素
-    const [collected, droper] = useDrop({
+    const [, droper] = useDrop({
         // accept 是一个标识，需要和对应的 drag 元素中 item 的 type 值一致，否则不能感应
         accept: 'test',
         drop: (item: IConfig, monitor: DropTargetMonitor) => {
@@ -103,11 +104,6 @@ const Body: FC = () => {
                 config: item,
             }
         },
-        collect: (monitor: DropTargetMonitor) => ({
-            x: monitor.getSourceClientOffset()?.x,
-            y: monitor.getSourceClientOffset()?.y,
-            item: monitor.getItem<IConfig>(),
-        })
     });
     useEffect(() => {
         if (!isDragging && !selectedComponent) return;

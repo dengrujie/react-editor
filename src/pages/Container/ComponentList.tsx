@@ -3,7 +3,7 @@ import { Button } from 'antd';
 import DragerBox from '../Assist/DragerBox';
 import { ComponentsList } from '../../components';
 
-type ComponentConfig = {
+export type ComponentConfig = {
     name: string;
     value: ComponentsList;
 }

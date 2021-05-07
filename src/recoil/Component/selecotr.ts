@@ -1,5 +1,23 @@
 import { selector } from 'recoil';
 import { componentStore } from './atom';
+import { cloneDeep } from 'lodash-es';
+import { Ilist } from '../../pages/Container/Body';
+
+const isNearly = (dragValue: number, targetValue: number, diff = 3) => {
+    const isNear = Math.abs(dragValue - targetValue) <= diff
+    return {
+        isNear,
+        targetValue,
+    };
+};
+
+export const componentIdList = selector({
+    key: 'componentIdList',
+    get: ({ get }) => {
+        const { list } = get(componentStore);
+        return list.map((item) => item.config.uuid)
+    }
+});
 
 export interface INearComponent {
     showVerticalLeft: boolean,
@@ -10,23 +28,7 @@ export interface INearComponent {
     showAcrossBottom: boolean,
     left: number,
     top: number,
-}
-
-const isNearly = (dragValue: number, targetValue: number, diff = 3) => {
-    const isNear = Math.abs(dragValue - targetValue) <= diff
-    return {
-        isNear,
-        targetValue,
-    };
-}
-
-export const componentIdList = selector({
-    key: 'componentIdList',
-    get: ({ get }) => {
-        const { list } = get(componentStore);
-        return list.map((item) => item.config.uuid)
-    }
-})
+};
 
 export const nearComponent = selector<INearComponent>({
     key: 'nearComponent',
@@ -103,4 +105,24 @@ export const nearComponent = selector<INearComponent>({
             top,
         }
     }
+});
+
+export const activeComponent = selector<Ilist| undefined>({
+    key: 'activeComponent',
+    get: ({ get }) => {
+        const { selectedComponent, list } = get(componentStore);
+        const currentComponent = list.find((item) => item.config.uuid === selectedComponent);
+        return currentComponent;
+    },
+    set: ({ set, get }, newValue) => {
+        const { selectedComponent, list } = get(componentStore);
+        const cloneList = cloneDeep(list);
+        const newList = cloneList.map((item) => {
+            if(item.config.uuid === selectedComponent) {
+                return newValue as Ilist
+            }
+            return item;
+        });
+        set(componentStore, (values) => ({...values, list: newList}))
+    },
 })

@@ -1,19 +1,19 @@
 import React, { FC } from 'react';
 import { useDrag, DragSourceMonitor } from 'react-dnd';
 import Components, { CONFIG } from '../../components';
-import { IConfig } from '../Container/Body';
+import { ComponentConfig } from '../Container/ComponentList';
 import { uniqueId } from 'lodash-es';
 
 interface IDragerBox {
-    config: IConfig;
+    config: ComponentConfig
 }
 
-const DragerBox: FC<IDragerBox> = (props) => {
-    const CurrentComponent = Components[props.config.value];
-    const CurrentProps = CONFIG[props.config.value];
+const DragerBox: FC<IDragerBox> = ({ children, config }) => {
+    const CurrentComponent = Components[config.value];
+    const CurrentProps = CONFIG[config.value];
     const [, drager, dragerPreview ] = useDrag(() => ({
         type: 'test',
-        item: { id: 'btn', ...props.config, uuid: uniqueId('component_'), ...CurrentProps.props },
+        item: { id: 'btn', ...config , uuid: uniqueId('component_'), ...CurrentProps.props },
         collect: (monitor: DragSourceMonitor) => ({
             opacity: monitor.isDragging() ? 0.4 : 1,
             isDragging: monitor.isDragging()
@@ -25,7 +25,7 @@ const DragerBox: FC<IDragerBox> = (props) => {
     return (
         <>
             <div ref={drager}>
-                {props.children}
+                {children}
             </div>
             <div style={{ position: 'fixed', zIndex: -1 }}>
                 <div ref={dragerPreview} style={{ display: 'flex', position: 'relative' }}>

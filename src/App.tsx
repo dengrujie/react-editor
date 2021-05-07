@@ -5,7 +5,9 @@ import Headers from "./pages/Container/Header";
 import ComponentList from './pages/Container/ComponentList';
 import Attribute from "./pages/Container/Attribute";
 import Body from "./pages/Container/Body";
+import LeftCollapse from './pages/Assist/LeftCollapse';
 import './App.css';
+import 'animate.css';
 
 const { Header, Content, Sider } = Layout;
 
@@ -28,6 +30,7 @@ const App: FC = () => {
             <Attribute />
           </Sider>
         </Layout>
+        <LeftCollapse/>
       </Layout>
     </RecoilRoot>
   )
