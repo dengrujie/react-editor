@@ -24,7 +24,9 @@ const App: FC = () => {
             <ComponentList />
           </Sider>
           <Content style={{ padding: '0 15px' }}>
-            <Body />
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <Body />
+            </div>
           </Content>
           <Sider theme='light' width={300}>
             <Attribute />

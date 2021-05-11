@@ -3,6 +3,8 @@ import { cloneDeep } from 'lodash-es';
 import './Shape.less';
 import { useRecoilState } from 'recoil';
 import { componentStore } from '../../recoil/Component/atom';
+import { allConfiger } from '../../recoil/Configer/atom';
+import { getInitializeComponentCenter, getSymmetry, calcScaleAndRotateComponentStyle } from '../../utils/componentCalculate';
 
 type Point = {
     id: string
@@ -76,6 +78,7 @@ const getPointStyle = (point: Point) => {
 }
 
 const Shape: FC<IShape> = memo(({ id }) => {
+    const [configer] = useRecoilState(allConfiger);
     const [componentState, setComponentState] = useRecoilState(componentStore);
     const { list } = componentState;
     const handleMouseDownOnPoint = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -86,32 +89,39 @@ const Shape: FC<IShape> = memo(({ id }) => {
         downEvent.preventDefault();
         const startX = downEvent.clientX;
         const startY = downEvent.clientY;
-        const hasTop = /top/.test(point!.id);
-        const hasBottom = /bottom/.test(point!.id);
-        const hasLeft = /left/.test(point!.id);
-        const hasRight = /right/.test(point!.id);
         // 是否需要保存快照
         let needSave = false;
         setComponentState((state) => ({
             ...state,
             snapshotSave: needSave
         }));
+        // 当前点击坐标
+        const currentPoint = {
+            x: startX,
+            y: startY,
+        };
         const move = (moveEvent: MouseEvent) => {
             const newlist =  cloneDeep(list);
             const selected = newlist.find((item) => item.config.uuid === id);
             const newStyle = selected!.config.style;
             const currX = moveEvent.clientX;
             const currY = moveEvent.clientY;
-            const disX = currX - startX;
-            const disY = currY - startY;
-            const newHeight = Number(newStyle.height) + (hasTop ? -disY : hasBottom ? disY : 0);
-            const newWidht = Number(newStyle.width) + (hasLeft ? -disX : hasRight ? disX : 0);
-            newStyle.height = (newHeight ? newHeight : 0);
-            newStyle.width = (newWidht ? newWidht : 0);
-            newStyle.left = Number(newStyle.left) + (hasLeft? disX : 0);
-            newStyle.top = Number(newStyle.top) + (hasTop? disY : 0);
-            
-            // selected!.config.style = newStyle;
+            // 模式宽度空白距离
+            const modeWidth = configer.modeOption.name === 'pc' ? 0 : Number(configer.modeOption.style.width);
+            // 组件旋转前中心坐标
+            const centerPoint = getInitializeComponentCenter(selected!, modeWidth);
+            // 当前对称点坐标
+            const symmetricPoint = getSymmetry(centerPoint, currentPoint);
+            // 当前鼠标坐标
+            const movePoint = {
+                x: currX,
+                y: currY,
+            }
+            const newS = calcScaleAndRotateComponentStyle(selected!, movePoint, symmetricPoint, point!.id);
+            newStyle.height = newS.height;
+            newStyle.width = newS.width;
+            newStyle.left = newS.left;
+            newStyle.top = newS.top;
             setComponentState((state) => ({
                 ...state,
                 list: newlist,
@@ -127,7 +137,6 @@ const Shape: FC<IShape> = memo(({ id }) => {
                 ...state,
                 snapshotSave: needSave
             }))
-            
         }
         document.addEventListener('mousemove', move);
         document.addEventListener('mouseup', up);

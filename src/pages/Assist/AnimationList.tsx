@@ -5,6 +5,11 @@ import { allConfiger } from '../../recoil/Configer/atom';
 import { activeComponent } from '../../recoil/Component/selecotr';
 import { cloneDeep } from 'lodash-es';
 
+export type Animation = {
+    label: string,
+    value: string
+};
+
 const animationDataList = [
     {
         label: '进入',
@@ -39,9 +44,9 @@ const AnimationList:FC = () => {
         if(e.currentTarget.dataset.type === previewAnimate) return;
         setPreviewAnimate(e.currentTarget.dataset.type!);
     }
-    const addAnimation = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
-        const newAnimations = currentComponent?.config.animations.slice() as string [];
-        newAnimations?.push(e.currentTarget.dataset.type as string);
+    const addAnimation = (animation: Animation) => {
+        const newAnimations = currentComponent?.config.animations.slice() as Animation [];
+        newAnimations?.push(animation);
         const newComponent = cloneDeep(currentComponent);
         newComponent!.config.animations = newAnimations;
         changeCurrentComponent(newComponent);
@@ -61,8 +66,7 @@ const AnimationList:FC = () => {
                                     key={item2.value} 
                                     className={`animate__animated ${ previewAnimate === item2.value ? item2.value : ''}`} 
                                     onMouseOver={changePreviewAnimate}
-                                    data-type={item2.value}
-                                    onClick={addAnimation}>
+                                    onClick={() => addAnimation(item2)}>
                                     {item2.label}
                                 </Button>
                             ))

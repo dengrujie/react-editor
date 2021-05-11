@@ -11,6 +11,7 @@ interface IComponentBox {
 const componentStyleFilter = (item: Ilist) => {
     const props = JSON.parse(JSON.stringify(item.config));
     props.style.position = 'initial';
+    props.style.transform = 'rotate(0deg)';
     return props;
 }
 

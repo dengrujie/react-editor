@@ -31,7 +31,7 @@ const Animation: FC = memo(() => {
             <div>
                 { 
                     animations.map((item, index) => (
-                        <div key={item+index} style={{ padding: 2, textAlign: 'center'}}><Tag color="blue-inverse" closable onClose={() => deleteAnimation(index)} closeIcon={<CloseCircleOutlined style={{ color: '#fff' }} />}>{item}</Tag></div>
+                        <div key={item.value+index} style={{ padding: 2, textAlign: 'center'}}><Tag color="blue-inverse" closable onClose={() => deleteAnimation(index)} closeIcon={<CloseCircleOutlined style={{ color: '#fff' }} />}>{item.label}</Tag></div>
                     ))
                 }
             </div>

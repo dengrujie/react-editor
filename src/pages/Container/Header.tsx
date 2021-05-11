@@ -1,9 +1,11 @@
 import React, { FC, useState, useCallback } from 'react';
 import { useRecoilState } from 'recoil';
 import { componentStore } from '../../recoil/Component/atom';
+import { allConfiger } from '../../recoil/Configer/atom';
 import { Row, Col, Button, Radio, RadioChangeEvent, InputNumber } from 'antd';
 import { ButtonType } from 'antd/lib/button';
 
+type ModeList = 'pc' | 'mobile' | 'miniProgram'
 interface IButtonList {
     key: string,
     text: string,
@@ -43,18 +45,54 @@ const buttonList: IButtonList[] = [
     },
 ];
 const modelOptions = [
-    { label: '手机', value: 'mobile' },
     { label: '电脑', value: 'pc' },
+    { label: '手机', value: 'mobile' },
     { label: '小程序', value: 'miniProgram' },
     { label: '自定义', value: 'custom' },
 ];
 
+const modeOptionList = {
+    pc: {
+        style: {
+            width: '100%',
+            minHeight: '100vh',
+        }
+    },
+    mobile: {
+        style: {
+            width: 375,
+            height: 667,
+            overflowX: 'hidden',
+            overflowY: 'scroll'
+        }
+    },
+    miniProgram: {
+        style: {
+            width: 375,
+            height: 667,
+            overflowX: 'hidden',
+            overflowY: 'scroll'
+        }
+    },
+}
+
 const Header: FC = React.memo(() => {
-    const [modelRadio, setModelRadio] = useState('mobile');
+    const [modelRadio, setModelRadio] = useState('pc');
     const [componentState, setComponentState] = useRecoilState(componentStore);
+    const [, setAllConfiger] = useRecoilState(allConfiger);
     const { snapshotData, snapshotIndex } = componentState;
     const modalChange = (e: RadioChangeEvent) => {
         setModelRadio(e.target.value);
+        if (e.target.value !== 'custom') {
+            const modeOption = modeOptionList[e.target.value as ModeList];
+            setAllConfiger((values) => ({
+                ...values,
+                modeOption: {
+                    name: e.target.value,
+                    ...modeOption,
+                }
+            }))
+        }
     };
     const undo = useCallback(() => {
         if (snapshotIndex <= 0) return;

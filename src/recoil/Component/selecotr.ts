@@ -2,6 +2,7 @@ import { selector } from 'recoil';
 import { componentStore } from './atom';
 import { cloneDeep } from 'lodash-es';
 import { Ilist } from '../../pages/Container/Body';
+import { getStyleOfRotate } from '../../utils/componentCalculate';
 
 const isNearly = (dragValue: number, targetValue: number, diff = 3) => {
     const isNear = Math.abs(dragValue - targetValue) <= diff
@@ -33,23 +34,37 @@ export interface INearComponent {
 export const nearComponent = selector<INearComponent>({
     key: 'nearComponent',
     get: ({ get }) => {
-        const { selectedComponent, list } = get(componentStore);
-        const currentComponent = list.find((item) => item.config.uuid === selectedComponent);
-        const newList = list.filter((item) => item.config.uuid !== selectedComponent)
         let showVerticalLeft = false, showVerticalMid = false, showVerticalRight = false, showAcrossTop = false, showAcrossMid = false, showAcrossBottom = false, left = 0, top = 0;
+        const { selectedComponent, list } = get(componentStore);
+        if(!selectedComponent) {
+            return {
+                showVerticalLeft,
+                showVerticalMid,
+                showVerticalRight,
+                showAcrossTop,
+                showAcrossMid,
+                showAcrossBottom,
+                left,
+                top,
+            }
+        }
+        const currentComponent = list.find((item) => item.config.uuid === selectedComponent);
+        const currentComponentStyle = getStyleOfRotate(currentComponent!);
+        const newList = list.filter((item) => item.config.uuid !== selectedComponent);
         newList.forEach((item) => {
-            const drageVerticalLeft = Number(currentComponent?.config.style.left);
-            const drageVerticalMid = Number(currentComponent?.config.style.left) + (Number(currentComponent?.config.style.width) / 2);
-            const drageVerticalRight = Number(currentComponent?.config.style.left) + Number(currentComponent?.config.style.width);
-            const drageAcrossTop = Number(currentComponent?.config.style.top);
-            const drageAcrossMid = Number(currentComponent?.config.style.top) + (Number(currentComponent?.config.style.height) / 2);
-            const drageAcrossBottom = Number(currentComponent?.config.style.top) + Number(currentComponent?.config.style.height);
-            const targetVerticalLeft = Number(item.config.style.left);
-            const targetVerticalMid = Number(item.config.style.left) + (Number(item.config.style.width) / 2);
-            const targetVerticalRight = Number(item.config.style.left) + Number(item.config.style.width);
-            const targetAcrossTop = Number(item.config.style.top);
-            const targetAcrossMid = Number(item.config.style.top) + (Number(item.config.style.height) / 2);
-            const targetAcrossBottom = Number(item.config.style.top) + Number(item.config.style.height);
+            const itemStyle = getStyleOfRotate(item);
+            const drageVerticalLeft = Number(currentComponentStyle.left);
+            const drageVerticalMid = Number(currentComponentStyle.left) + (Number(currentComponentStyle.width) / 2);
+            const drageVerticalRight = Number(currentComponentStyle.left) + Number(currentComponentStyle.width);
+            const drageAcrossTop = Number(currentComponentStyle.top);
+            const drageAcrossMid = Number(currentComponentStyle.top) + (Number(currentComponentStyle.height) / 2);
+            const drageAcrossBottom = Number(currentComponentStyle.top) + Number(currentComponentStyle.height);
+            const targetVerticalLeft = Number(itemStyle.left);
+            const targetVerticalMid = Number(itemStyle.left) + (Number(itemStyle.width) / 2);
+            const targetVerticalRight = Number(itemStyle.left) + Number(itemStyle.width);
+            const targetAcrossTop = Number(itemStyle.top);
+            const targetAcrossMid = Number(itemStyle.top) + (Number(itemStyle.height) / 2);
+            const targetAcrossBottom = Number(itemStyle.top) + Number(itemStyle.height);
             const VerticalLeftDiff = isNearly(drageVerticalLeft, targetVerticalLeft);
             const VerticalLeftDiff2 = isNearly(drageVerticalLeft, targetVerticalMid);
             const VerticalLeftDiff3 = isNearly(drageVerticalLeft, targetVerticalRight);
@@ -125,4 +140,4 @@ export const activeComponent = selector<Ilist| undefined>({
         });
         set(componentStore, (values) => ({...values, list: newList}))
     },
-})
+});

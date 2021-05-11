@@ -5,6 +5,7 @@ import 'react-contexify/dist/ReactContexify.css';
 import { useRecoilState } from 'recoil';
 import { componentStore } from '../../recoil/Component/atom';
 import Shape from './Shape';
+import RotateBox from './RotateBox';
 
 const MENU_ID = 'blahblah';
 
@@ -77,6 +78,7 @@ const SourceBox: FC<ISourceBox> = ({ uuid, children}) => {
         <>
             <div ref={drager} style={{ position: 'absolute', ...style }} onContextMenu={show} onMouseDown={selectCurrentComponent} onClick={selectCurrentComponent}>
                 { selectedComponent === config.uuid && <Shape id={config.uuid}/> }
+                { selectedComponent === config.uuid && <RotateBox/> }
                 {children}
             </div>
             <Menu id={MENU_ID}>

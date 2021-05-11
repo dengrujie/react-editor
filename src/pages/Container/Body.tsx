@@ -2,12 +2,16 @@ import React, { FC, useCallback, useEffect, useState } from 'react';
 import { useDrop, DropTargetMonitor } from 'react-dnd';
 import { cloneDeep } from 'lodash-es';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import './body.less';
 import { componentStore } from '../../recoil/Component/atom';
+import { allConfiger } from '../../recoil/Configer/atom';
 import { componentIdList, nearComponent, INearComponent } from '../../recoil/Component/selecotr';
+import { calcLeftdistance } from '../../utils/componentCalculate';
 import { ComponentsList } from '../../components';
 import ComponentBox from '../Assist/ComponentBox';
 import SourceBox from '../Assist/SourceBox';
 import MarkLine from '../Assist/MarkLine';
+import { Animation } from '../Assist/AnimationList';
 
 export type STYLE = {
     [key: string]: string | number | undefined;
@@ -17,7 +21,7 @@ export interface IConfig {
     value: ComponentsList;
     uuid?: string;
     style: STYLE;
-    animations: string[];
+    animations: Animation[];
 }
 
 export interface IPosition {
@@ -27,14 +31,16 @@ export interface IPosition {
 
 export interface Ilist {
     config: IConfig;
+    rotate: number;
 }
 
 export const WRAPPERLEFT = 265;
 export const WRAPPERTOP = 74;
 
 const Body: FC = () => {
-    const [ offset, setOffset ] = useState({ x: 0, y: 0 });
+    const [offset, setOffset] = useState({ x: 0, y: 0 });
     const [componentState, setComponentState] = useRecoilState(componentStore);
+    const configer = useRecoilValue(allConfiger);
     const idList = useRecoilValue(componentIdList);
     const nearObj = useRecoilValue(nearComponent);
     const { list, snapshotData, snapshotIndex, snapshotSave, selectedComponent, isDragging } = componentState;
@@ -62,13 +68,15 @@ const Body: FC = () => {
         drop: (item: IConfig, monitor: DropTargetMonitor) => {
             const newItem = cloneDeep(item);
             const target = list.find((i) => i.config.uuid === newItem.uuid);
-            newItem.style.left = monitor.getClientOffset()!.x - WRAPPERLEFT;
+            const width = configer.modeOption.name === 'pc' ? 0 : configer.modeOption.style.width as number;
+            newItem.style.left = monitor.getClientOffset()!.x - calcLeftdistance(width) - WRAPPERLEFT;
             newItem.style.top = monitor.getClientOffset()!.y - WRAPPERTOP;
             if (!target) {
                 setComponentState((state) => ({
                     ...state,
                     list: [...list, {
                         config: newItem,
+                        rotate: 0,
                     }],
                     isDragging: false
                 }));
@@ -135,7 +143,7 @@ const Body: FC = () => {
         }))
     }, []);
     return (
-        <div style={{ backgroundColor: '#fff', padding: 10, minHeight: '100vh', position: 'relative' }} ref={droper} onClick={selectCurrentComponent}>
+        <div className='body-wrapper' style={configer.modeOption.style} ref={droper} onClick={selectCurrentComponent}>
             <MarkLine />
             {
                 idList.map((item) => {

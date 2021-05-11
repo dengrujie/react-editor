@@ -1,8 +1,15 @@
 import { atom } from 'recoil';
 
+type ModeOption = {
+    name: string,
+    style: {
+        [key: string]: string | number,
+    }
+}
 interface IConfiger {
     animationModalState: boolean;
     actionModalState: boolean;
+    modeOption: ModeOption,
 }
 
 export const allConfiger = atom<IConfiger>({
@@ -10,5 +17,12 @@ export const allConfiger = atom<IConfiger>({
     default: {
         animationModalState: false,
         actionModalState: false,
+        modeOption: {
+            name: 'pc',
+            style: {
+                width: '100%',
+                minHeight: '100vh',
+            }
+        }
     }
 });

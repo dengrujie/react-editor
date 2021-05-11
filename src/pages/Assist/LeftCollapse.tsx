@@ -2,8 +2,9 @@ import React, { FC } from 'react';
 import { useRecoilState } from 'recoil';
 import { allConfiger } from '../../recoil/Configer/atom';
 import './LeftCollapse.less';
-import { Modal } from 'antd';
+import { Drawer } from 'antd';
 import AnimationList from './AnimationList';
+import ActionList from './ActionList';
 
 const LeftCollapse:FC = () => {
     const [config, setConfig] = useRecoilState(allConfiger);
@@ -16,19 +17,21 @@ const LeftCollapse:FC = () => {
         }))
     }
     return (
-        <Modal 
-            visible={actionModalState || animationModalState} 
-            closable={false} 
-            footer={null} 
-            style={{ margin: 0, top: 0, height: '100%' }}
-            bodyStyle={{ padding: 0 }}
-            onCancel={hideModal}>
+        <Drawer
+            visible={actionModalState || animationModalState}
+            closable={false}
+            placement="left"
+            onClose={hideModal}
+        >
             <div className='leftCollapse-body'>
                 {
                     animationModalState && <AnimationList/>
                 }
+                {
+                    actionModalState && <ActionList/>
+                }
             </div>
-        </Modal>
+        </Drawer>
     )
 }
 
