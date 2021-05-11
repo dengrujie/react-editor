@@ -21,7 +21,7 @@ const SourceBox: FC<ISourceBox> = ({ uuid, children}) => {
             isDragging: dragging
         }))
     }, []);
-    const [collected, drager] = useDrag(() => ({
+    const [collected, drager, dragerPreview] = useDrag(() => ({
         type: 'test',
         item: config,
         collect: (monitor: DragSourceMonitor) => ({
@@ -43,11 +43,27 @@ const SourceBox: FC<ISourceBox> = ({ uuid, children}) => {
     }, []);
     return (
         <>
-            <div ref={drager} style={{ position: 'absolute', ...style }} onMouseDown={selectCurrentComponent} onClick={selectCurrentComponent}>
-                { selectedComponent === config.uuid && <Shape id={config.uuid}/> }
-                { selectedComponent === config.uuid && <RotateBox/> }
-                {children}
-            </div>
+            {
+                !collected.isDragging && (
+                    <div ref={drager} style={{ position: 'absolute', ...style }} onMouseDown={selectCurrentComponent} onClick={selectCurrentComponent}>
+                        { selectedComponent === config.uuid && <Shape id={config.uuid}/> }
+                        { selectedComponent === config.uuid && <RotateBox/> }
+                        {children}
+                    </div>
+                )
+            }
+            {
+                <div ref={dragerPreview} style={{ ...style, display: 'none' }}></div>
+            }
+            {
+                collected.isDragging && (
+                    <div style={{ position: 'absolute', ...style }} onMouseDown={selectCurrentComponent} onClick={selectCurrentComponent}>
+                        { selectedComponent === config.uuid && <Shape id={config.uuid}/> }
+                        { selectedComponent === config.uuid && <RotateBox/> }
+                        {children}
+                    </div>
+                )
+            }
         </>
     )
 }

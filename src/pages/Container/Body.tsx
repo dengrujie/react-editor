@@ -154,23 +154,28 @@ const Body: FC = () => {
             <MarkLine />
             {
                 idList.map((item) => {
-                    if (isDragging && selectedComponent && !snapshotSave) {
-                        if (item !== selectedComponent) {
-                            return (
-                                <SourceBox key={item} uuid={item}>
-                                    <ComponentBox uuid={item!} />
-                                </SourceBox>
-                            )
-                        } else {
-                            return ''
-                        }
-                    } else {
-                        return (
-                            <SourceBox key={item} uuid={item}>
-                                <ComponentBox uuid={item!} />
-                            </SourceBox>
-                        )
-                    }
+                    // if (isDragging && selectedComponent && !snapshotSave) {
+                    //     if (item !== selectedComponent) {
+                    //         return (
+                    //             <SourceBox key={item} uuid={item}>
+                    //                 <ComponentBox uuid={item!} />
+                    //             </SourceBox>
+                    //         )
+                    //     } else {
+                    //         return ''
+                    //     }
+                    // } else {
+                    //     return (
+                    //         <SourceBox key={item} uuid={item}>
+                    //             <ComponentBox uuid={item!} />
+                    //         </SourceBox>
+                    //     )
+                    // }
+                    return (
+                        <SourceBox key={item} uuid={item}>
+                            <ComponentBox uuid={item!} />
+                        </SourceBox>
+                    )
                 })
             }
         </div>
