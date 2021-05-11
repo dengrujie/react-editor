@@ -2,6 +2,7 @@ import React, { FC, useCallback, useEffect, useState } from 'react';
 import { useDrop, DropTargetMonitor } from 'react-dnd';
 import { cloneDeep } from 'lodash-es';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { useContextMenu } from 'react-contexify';
 import './body.less';
 import { componentStore } from '../../recoil/Component/atom';
 import { allConfiger } from '../../recoil/Configer/atom';
@@ -12,6 +13,7 @@ import ComponentBox from '../Assist/ComponentBox';
 import SourceBox from '../Assist/SourceBox';
 import MarkLine from '../Assist/MarkLine';
 import { Animation } from '../Assist/AnimationList';
+import ContextMenu, { MENU_ID } from '../Assist/ContextMenu';
 
 export type STYLE = {
     [key: string]: string | number | undefined;
@@ -142,8 +144,13 @@ const Body: FC = () => {
             selectedComponent: '',
         }))
     }, []);
+
+    const { show } = useContextMenu({
+        id: MENU_ID,
+    });
     return (
-        <div className='body-wrapper' style={configer.modeOption.style} ref={droper} onClick={selectCurrentComponent}>
+        <div className='body-wrapper' style={configer.modeOption.style} ref={droper} onClick={selectCurrentComponent} onContextMenu={show}>
+            <ContextMenu/>
             <MarkLine />
             {
                 idList.map((item) => {

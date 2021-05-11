@@ -88,6 +88,10 @@ export const mod360 = (deg: number) => {
 // 根据旋转角度，鼠标坐标，鼠标坐标对称点计算旋转角度为0时的拉伸值，然后返回对应style
 export const calcScaleAndRotateComponentStyle = (currentComponent: Ilist, currentPoint: Point, symmetricPoint: Point, pointType: string) => {
     const newCenterPoint = getCenterPonit(currentPoint, symmetricPoint);
+    const hasTop = /top/.test(pointType),
+          hasBottom = /bottom/.test(pointType),
+          hasLeft = /left/.test(pointType),
+          hasRight = /right/.test(pointType);
     const newTopLeftPoint = calculateRotatedPointCoordinate(currentPoint, newCenterPoint, -currentComponent.rotate);
     const newBottomRightPoint = calculateRotatedPointCoordinate(symmetricPoint, newCenterPoint, -currentComponent.rotate);
     let newWidth = Number(currentComponent.config.style.width), 
@@ -96,16 +100,14 @@ export const calcScaleAndRotateComponentStyle = (currentComponent: Ilist, curren
         newTop = Number(currentComponent.config.style.top);
     const xDis = Math.abs(newBottomRightPoint.x - newTopLeftPoint.x);
     const yDis = Math.abs(newBottomRightPoint.y - newTopLeftPoint.y);
-    const hasTop = /top/.test(pointType),
-          hasBottom = /bottom/.test(pointType),
-          hasLeft = /left/.test(pointType),
-          hasRight = /right/.test(pointType);
     if (!(hasTop || hasBottom) && (hasLeft || hasRight)) { // 左，右两点拖拽计算
         newWidth = Math.round(xDis);
         newLeft = Math.min(newTopLeftPoint.x, newBottomRightPoint.x) - WRAPPERLEFT;
+        newTop = Math.min(newTopLeftPoint.y, newBottomRightPoint.y) - WRAPPERTOP - (newHeight / 2);
     }
     if ((hasTop || hasBottom) && !(hasLeft || hasRight)) { // 上，下两点拖拽计算
         newHeight = Math.round(yDis);
+        newLeft = Math.min(newTopLeftPoint.x, newBottomRightPoint.x) - WRAPPERLEFT - (newWidth / 2);
         newTop = Math.min(newTopLeftPoint.y, newBottomRightPoint.y) - WRAPPERTOP;
     }
     if ((hasTop || hasBottom) && (hasLeft || hasRight)) { // 左上，左下，右上，右下四点拖拽计算
