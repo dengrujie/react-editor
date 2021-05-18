@@ -100,7 +100,6 @@ const Body: FC = () => {
             if(newTarget!.config.style.left === disLeft && newTarget!.config.style.top === disTop) return;
             newTarget!.config.style.left = monitor.getSourceClientOffset()!.x - WRAPPERLEFT;
             newTarget!.config.style.top = monitor.getSourceClientOffset()!.y - WRAPPERTOP;
-            
             setComponentState((state) => ({
                 ...state,
                 list: [...newList],

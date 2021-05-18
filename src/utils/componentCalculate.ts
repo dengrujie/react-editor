@@ -129,7 +129,7 @@ export const calcScaleAndRotateComponentStyle = (currentComponent: Ilist, curren
 
 // 计算旋转后X长度
 export const getWidthOfRotate = (width: number, height: number, rotate: number,) => {
-    return width * cos(rotate) + height * sin(rotate);
+    return (width * cos(rotate)) + (height * sin(rotate));
 }
 
 // 计算旋转后Y长度

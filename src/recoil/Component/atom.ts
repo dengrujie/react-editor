@@ -8,6 +8,10 @@ interface IComponentStore {
     snapshotIndex: number,
     snapshotSave: boolean,
     isDragging: boolean,
+    copyData: {
+        data?: Ilist | '',
+        index?: number | -1,
+    }
 }
 
 export const componentStore = atom<IComponentStore>({
@@ -18,6 +22,10 @@ export const componentStore = atom<IComponentStore>({
         snapshotData: [],
         snapshotIndex: -1,
         snapshotSave: true,
-        isDragging: false
+        isDragging: false,
+        copyData: {
+            data: '',
+            index: -1
+        }
     },
 });

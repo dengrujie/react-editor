@@ -89,7 +89,6 @@ export const nearComponent = selector<INearComponent>({
             showAcrossTop = VerticalTopDiff1.isNear || VerticalTopDiff2.isNear || VerticalTopDiff3.isNear;
             showAcrossMid = VerticalTopDiff4.isNear || VerticalTopDiff5.isNear || VerticalTopDiff6.isNear;
             showAcrossBottom = VerticalTopDiff7.isNear || VerticalTopDiff8.isNear || VerticalTopDiff9.isNear;
-
             if(VerticalLeftDiff.isNear) {
                 left = VerticalLeftDiff.targetValue;
             }
@@ -99,6 +98,24 @@ export const nearComponent = selector<INearComponent>({
             if(VerticalLeftDiff3.isNear) {
                 left = VerticalLeftDiff3.targetValue;
             }
+            if(VerticalLeftDiff4.isNear && !showVerticalLeft) {
+                left = VerticalLeftDiff4.targetValue - (Number(currentComponentStyle.width) / 2);
+            }
+            if(VerticalLeftDiff5.isNear && !showVerticalLeft) {
+                left = VerticalLeftDiff5.targetValue - (Number(currentComponentStyle.width) / 2);
+            }
+            if(VerticalLeftDiff6.isNear && !showVerticalLeft) {
+                left = VerticalLeftDiff6.targetValue - (Number(currentComponentStyle.width) / 2);
+            }
+            if(VerticalLeftDiff7.isNear && !showVerticalLeft && !showVerticalMid) {
+                left = VerticalLeftDiff7.targetValue - Number(currentComponentStyle.width);
+            }
+            if(VerticalLeftDiff8.isNear && !showVerticalLeft && !showVerticalMid) {
+                left = VerticalLeftDiff8.targetValue - Number(currentComponentStyle.width);
+            }
+            if(VerticalLeftDiff7.isNear && !showVerticalLeft && !showVerticalMid) {
+                left = VerticalTopDiff9.targetValue - Number(currentComponentStyle.width);
+            }
             if(VerticalTopDiff1.isNear) {
                 top = VerticalTopDiff1.targetValue;
             }
@@ -107,6 +124,24 @@ export const nearComponent = selector<INearComponent>({
             }
             if(VerticalTopDiff3.isNear) {
                 top = VerticalTopDiff3.targetValue;
+            }
+            if(VerticalTopDiff4.isNear && !showAcrossTop) {
+                top = VerticalTopDiff4.targetValue - (Number(currentComponentStyle.height) / 2);
+            }
+            if(VerticalTopDiff5.isNear && !showAcrossTop) {
+                top = VerticalTopDiff5.targetValue - (Number(currentComponentStyle.height) / 2);
+            }
+            if(VerticalTopDiff6.isNear && !showAcrossTop) {
+                top = VerticalTopDiff6.targetValue - (Number(currentComponentStyle.height) / 2);
+            }
+            if(VerticalTopDiff7.isNear && !showAcrossTop && !showAcrossMid) {
+                top = VerticalTopDiff7.targetValue - Number(currentComponentStyle.height);
+            }
+            if(VerticalTopDiff8.isNear && !showAcrossTop && !showAcrossMid) {
+                top = VerticalTopDiff8.targetValue - Number(currentComponentStyle.height);
+            }
+            if(VerticalTopDiff9.isNear && !showAcrossTop && !showAcrossMid) {
+                top = VerticalTopDiff9.targetValue - Number(currentComponentStyle.height);
             }
         });
         return {
@@ -139,5 +174,42 @@ export const activeComponent = selector<Ilist| undefined>({
             return item;
         });
         set(componentStore, (values) => ({...values, list: newList}))
+    },
+});
+
+interface ICopyData {
+    currentIndex: number;
+    saveIndex: number | undefined;
+    data: '' | Ilist| undefined;
+}
+
+type EditComponentType = 'add' | 'remove' | 'edit'
+interface IEditComponent {
+    type: EditComponentType;
+    data?: Ilist
+}
+
+export const editComponent = selector<ICopyData | IEditComponent>({
+    key: 'editComponent',
+    get: ({ get }): ICopyData => {
+        const { copyData, list, selectedComponent } = get(componentStore);
+        const currentIndex = list.findIndex((item) => item.config.uuid === selectedComponent);
+        return { currentIndex, saveIndex: copyData.index, data: copyData.data };
+    },
+    set: ({ set, get }, newValue) => {
+        const { list, copyData } = get(componentStore);
+        const { type, data } = newValue as IEditComponent;
+        const cloneList = cloneDeep(list);
+        if (type === 'add') {
+            const newComponent = cloneDeep(copyData.data) as Ilist;
+            cloneList.push(newComponent);
+        }
+        if (type === 'remove') {
+            cloneList.splice(copyData.index!, 1)
+        }
+        if (type === 'edit') {
+            cloneList.splice(copyData.index!, 1, data!);
+        }
+        set(componentStore, (values) => ({...values, list: cloneList}));
     },
 });

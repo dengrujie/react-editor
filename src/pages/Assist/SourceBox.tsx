@@ -57,7 +57,7 @@ const SourceBox: FC<ISourceBox> = ({ uuid, children}) => {
             }
             {
                 collected.isDragging && (
-                    <div style={{ position: 'absolute', ...style }} onMouseDown={selectCurrentComponent} onClick={selectCurrentComponent}>
+                    <div style={{ position: 'absolute', ...style }}>
                         { selectedComponent === config.uuid && <Shape id={config.uuid}/> }
                         { selectedComponent === config.uuid && <RotateBox/> }
                         {children}

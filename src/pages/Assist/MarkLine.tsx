@@ -4,6 +4,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { componentStore } from '../../recoil/Component/atom';
 import { nearComponent, INearComponent } from '../../recoil/Component/selecotr';
 import { WRAPPERLEFT, WRAPPERTOP } from '../Container/Body';
+import { getStyleOfRotate } from '../../utils/componentCalculate';
 
 const lineList = ['vertical-left', 'vertical-mid', 'vertical-right', 'across-top', 'across-mid', 'across-bottom'];
 
@@ -45,7 +46,8 @@ const MarkLine: FC = () => {
     const getStyle = (lineName: string) => {
         const current = list.find((item) => item.config.uuid === selectedComponent);
         if (current) {
-            const { width, height, top, left } = current.config.style;
+            const currentComponentStyle = getStyleOfRotate(current);
+            const { width, height, top, left } = currentComponentStyle;
             const styles: LineStyle = {};
             switch (lineName) {
                 case 'vertical-left':
