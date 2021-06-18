@@ -201,8 +201,7 @@ export const editComponent = selector<ICopyData | IEditComponent>({
         const { type, data } = newValue as IEditComponent;
         const cloneList = cloneDeep(list);
         if (type === 'add') {
-            const newComponent = cloneDeep(copyData.data) as Ilist;
-            cloneList.push(newComponent);
+            cloneList.push(data!);
         }
         if (type === 'remove') {
             cloneList.splice(copyData.index!, 1)

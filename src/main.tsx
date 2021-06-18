@@ -8,9 +8,21 @@ import App from './App';
 //补丁，vite不会注入环境变量，会导致某些包运行错误
 window.process = { env: { NODE_ENV: 'dev' } };
 
+// const visual = (selector: string) => {
+//   console.log(1);
+//   return ReactDOM.render(
+//     <DndProvider backend={ HTML5Backend }>
+//       <App />
+//     </DndProvider>,
+//     document.getElementById(selector)
+//   )
+// }
+
 ReactDOM.render(
   <DndProvider backend={ HTML5Backend }>
     <App />
   </DndProvider>,
   document.getElementById('root')
 )
+
+// export default visual;

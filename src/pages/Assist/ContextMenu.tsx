@@ -4,6 +4,11 @@ import 'react-contexify/dist/ReactContexify.css';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { componentStore } from '../../recoil/Component/atom';
 import { activeComponent, editComponent } from '../../recoil/Component/selecotr';
+import { Ilist, WRAPPERLEFT, WRAPPERTOP } from '../Container/Body';
+import { calcLeftdistance } from '../../utils/componentCalculate';
+import { allConfiger } from '../../recoil/Configer/atom';
+import { cloneDeep } from 'lodash-es';
+import { getUniqueId } from '../../utils/base';
 
 export const MENU_ID = 'editor';
 
@@ -47,6 +52,7 @@ const RightMenuList = [
 ]
 
 const ContextMenu: FC = () => {
+    const configer = useRecoilValue(allConfiger);
     const currentComponent = useRecoilValue(activeComponent);
     const showMenuList = useMemo(() => {
         if(!currentComponent) {
@@ -56,38 +62,54 @@ const ContextMenu: FC = () => {
     }, [currentComponent]);
     const [componentState, setComponentState] = useRecoilState(componentStore);
     const { list } = componentState;
-    const [editState] = useRecoilState(editComponent);
-    const { currentIndex } = editState;
+    const [editState, changeEditState] = useRecoilState(editComponent);
+    const { currentIndex, data } = editState;
     const handleItemClick = ({ event }: ItemParams) =>{
         switch (event.currentTarget.dataset.type) {
             case 'copy':
-                copyComponent()
+                copyComponent();
                 break;
             case 'paste':
-                
+                pasteComponent(event.clientX, event.clientY);
                 break;
             case 'shear':
-                
+                copyComponent();
+                deleComponent();
                 break;
             case 'delete':
-                
+                deleComponent();
                 break;        
             default:
                 break;
         }
     };
     const copyComponent = () => {
-        console.log(list, currentIndex)
         setComponentState((values) => ({
             ...values,
             copyData: {
                 index: currentIndex,
                 data: currentComponent
             }
-        }))
-    }
-    const deleComponent = () => {}
-    const pasteComponent = () => {}
+        }));
+    };
+    const deleComponent = () => {
+        changeEditState({
+            type: 'remove'
+        });
+    };
+    const pasteComponent = (x: number, y: number) => {
+        const width = configer.modeOption.name === 'pc' ? 0 : configer.modeOption.style.width as number;
+        const left = x - calcLeftdistance(width) - WRAPPERLEFT;
+        const top = y - WRAPPERTOP;
+        const newData = cloneDeep(data) as Ilist;
+        newData.config.uuid = getUniqueId();
+        newData.config.style.left = left;
+        newData.config.style.top = top;
+        changeEditState({
+            type: 'add',
+            data: newData
+        });
+    };
 
     return (
         <>

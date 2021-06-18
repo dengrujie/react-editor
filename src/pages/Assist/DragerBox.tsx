@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { useDrag, DragSourceMonitor } from 'react-dnd';
 import Components, { CONFIG } from '../../components';
 import { ComponentConfig } from '../Container/ComponentList';
-import { uniqueId } from 'lodash-es';
+import { getUniqueId } from '../../utils/base';
 
 interface IDragerBox {
     config: ComponentConfig
@@ -13,13 +13,13 @@ const DragerBox: FC<IDragerBox> = ({ children, config }) => {
     const CurrentProps = CONFIG[config.value];
     const [, drager, dragerPreview ] = useDrag(() => ({
         type: 'test',
-        item: { id: 'btn', ...config , uuid: uniqueId('component_'), ...CurrentProps.props },
+        item: { id: 'btn', ...config , uuid: getUniqueId(), ...CurrentProps.props },
         collect: (monitor: DragSourceMonitor) => ({
             opacity: monitor.isDragging() ? 0.4 : 1,
             isDragging: monitor.isDragging()
         }),
         end: (item) => {
-            item.uuid = uniqueId('component_');
+            item.uuid = getUniqueId();
         },
     }))
     return (

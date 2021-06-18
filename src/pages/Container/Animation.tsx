@@ -5,12 +5,13 @@ import { cloneDeep } from 'lodash-es';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { allConfiger } from '../../recoil/Configer/atom';
 import { activeComponent } from '../../recoil/Component/selecotr';
+import { runAnimation } from '../../utils/base';
 
 const Animation: FC = memo(() => {
     const changeConfiger = useSetRecoilState(allConfiger);
     const currentComponent = useRecoilValue(activeComponent);
     const changeActiveComponent = useSetRecoilState(activeComponent);
-    const { animations } = currentComponent!.config;
+    const { animations, uuid } = currentComponent!.config;
     const showAnimationModal = () => {
         changeConfiger((values) => ({
             ...values,
@@ -23,15 +24,32 @@ const Animation: FC = memo(() => {
         const newComponent = cloneDeep(currentComponent);
         newComponent!.config.animations = newAnimations;
         changeActiveComponent(newComponent);
+    };
+    const playAllAnimation = () => {
+        const element = document.querySelector(`[uuid=${uuid}]`);
+        if(element) {
+            runAnimation(element as HTMLElement, animations);
+        }
+    };
+    const playAnimation = (index: number) => {
+        const element = document.querySelector(`[uuid=${uuid}]`);
+        if(element) {
+            runAnimation(element as HTMLElement, [animations[index]]);
+        }
     }
     return (
         <div>
-            <div style={{textAlign: 'center'}}><Button onClick={showAnimationModal}>添加动画</Button></div>
+            <div style={{textAlign: 'center'}}>
+                <Button onClick={showAnimationModal}>添加动画</Button>&nbsp;
+                <Button onClick={playAllAnimation}>播放动画</Button>
+            </div>
             <Divider/>
             <div>
                 { 
                     animations.map((item, index) => (
-                        <div key={item.value+index} style={{ padding: 2, textAlign: 'center'}}><Tag color="blue-inverse" closable onClose={() => deleteAnimation(index)} closeIcon={<CloseCircleOutlined style={{ color: '#fff' }} />}>{item.label}</Tag></div>
+                        <div key={item.value+index} style={{ padding: 8, textAlign: 'center'}} onClick={() =>playAnimation(index)}>
+                            <Tag color="blue-inverse" closable onClose={() => deleteAnimation(index)} closeIcon={<CloseCircleOutlined style={{ color: '#fff' }} />}>{item.label}</Tag>
+                        </div>
                     ))
                 }
             </div>

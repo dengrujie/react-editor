@@ -1,3 +1,4 @@
+import { uniqueId } from 'lodash-es';
 import { Animation } from '../pages/Assist/AnimationList';
 
 export const runAnimation = async (element: HTMLElement, animations: Animation[] = []) => {
@@ -17,3 +18,7 @@ export const runAnimation = async (element: HTMLElement, animations: Animation[]
         await play(animations[i])
     };
 };
+
+export const getUniqueId = () => {
+    return uniqueId('component_');
+}
